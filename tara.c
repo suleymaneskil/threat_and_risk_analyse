@@ -14,9 +14,16 @@ static uint8_t calc_attack_feasibility(attack_feasibility_t* attack);
  * @param feasibility_sum 
  * @return atk_feas_class_t 
  */
-static atk_feas_class_t calculate_attack_feasible_class(uint8_t feasibility_sum) ;
+static atk_feas_class_t calc_attack_feasible_class(uint8_t feasibility_sum) ;
 
 static impact_level_t calc_impact_level(impact_rating_t* impact);
+
+static uint8_t is_risk_threatment_desicion(risk_value_t risk_val);
+
+static uint8_t is_cs_goals(cybersecurity_goal_t* goal_cfg, const risk_assessment_t* risk_in);
+
+
+static uint8_t is_cs_claims(cybersecurity_claim_t* claim_cfg, const risk_assessment_t* risk_in);
 
 
 void tara_main(tara_cfg_t *tara_cfg)
@@ -118,9 +125,61 @@ static impact_level_t calc_impact_level(impact_rating_t* impact)
     return ret_val;
 }
 
-
-double calc_risk_value(atk_feas_class_t feasibilitySum, impact_rating_t attackFeasibleClass) 
-{
-    double riskValue = feasibilitySum * attackFeasibleClass;
+// risk_table
+risk_value_t calc_risk_value(atk_feas_class_t attackFeasibleClass, impact_level_t impact) 
+{ 
+    risk_value_t riskValue = risk_table[impact][attackFeasibleClass];
     return riskValue;
 }
+
+
+static uint8_t is_risk_threatment_desicion(risk_value_t risk_val)
+{
+    uint8_t desicion = 0U;
+
+    if((risk_val =! R_VERY_LOW) && (risk_val =! R_LOW))
+    {
+        desicion = 1U;
+    }
+    else
+    {
+        desicion = 0U;
+    }
+
+    return desicion;
+}
+
+
+static uint8_t is_cs_goals(cybersecurity_goal_t* goal_cfg, const risk_assessment_t* risk_in)
+{
+    uint8_t result = 0U;
+    if((risk_in->decision == REDUCE) || (risk_in->decision == AVOID))
+    {
+        goal_cfg->risk_assessment = risk_in;
+        result = 1U;
+    }
+    else
+    {
+        result = 0U;
+    }
+
+    return result;
+}
+
+static uint8_t is_cs_claims(cybersecurity_claim_t* claim_cfg, const risk_assessment_t* risk_in)
+{
+    uint8_t result = 0U;
+    if((risk_in->decision == ACCEPT) || (risk_in->decision == TRANSFER))
+    {
+        claim_cfg->risk_assessment = risk_in;
+        result = 1U;
+    }
+    else
+    {
+        result = 0U;
+    }
+
+    return result;
+}
+
+

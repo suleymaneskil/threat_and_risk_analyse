@@ -14,19 +14,6 @@ asset_t communicationPath = {"Communication Path"};
 asset_t dataPath = {"Data Path"};
 
 
-
-risk_treatment_decision_t makeRiskTreatmentDecision(double riskValue) {
-    if (riskValue <= 10) {
-        return REDUCE;
-    } else if (riskValue <= 20) {
-        return AVOID;
-    } else if (riskValue <= 30) {
-        return TRANSFER;
-    } else {
-        return ACCEPT;
-    }
-}
-
 security_controller_t *createCybersecurityControl(risk_treatment_decision_t decision, security_controller_t controller) {
     security_controller_t *control = malloc(sizeof(security_controller_t));
     control->controller = controller;
