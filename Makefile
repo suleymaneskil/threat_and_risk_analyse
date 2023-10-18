@@ -8,41 +8,49 @@ BugFV := 00
 COMPILER := gcc
 LANG := c17
 
-PROC :=	prepocessor
-COMP :=	compile
+PROC := prepocessor
+COMP := compile
 COMPL := compilation
 ASM := assembler
 OUT := testOut
 
 SOURCE := main.c
-SOURCE += 
+SOURCE += tara.c
 
-HEADER := dcm_dsp.h
-HEADER += 
-
+HEADER := tara.h
+HEADER += tara_cfg.h
 
 OBJECT_FILES := $(patsubst %.c,$(OUT)/%.o,$(SOURCE))
 
-.PHONY: $(COMP) 
+.PHONY: $(COMP)
 $(COMP): clean makedirout $(COMPL) EXE final
 
 .PHONY: final
 final:
-	echo [off]
-	echo  ["Compile is successfull!"]
+	@echo "[off]"
+	@echo "[\"Compile is successful!\"]"
 
 .PHONY: makedirout
 makedirout:
-
-	mkdir $(OUT)
+	mkdir -p $(OUT)
 
 .PHONY: $(COMPL)
-$(COMPL): $(SOURCE)
-	$(foreach src,$(SOURCE),$(COMPILER) -std=$(LANG) -pedantic-errors -g -Wall -Wextra -Wconversion -Wsign-conversion -c $(src) -o $(patsubst %.c,$(OUT)/%.o,$(src)) && echo "Compiled $(src) to $(patsubst %.c,$(OUT)/%.o,$(src))";)
+$(COMPL): $(OBJECT_FILES)
+
+$(OUT)/%.o: %.c $(HEADER)
+	$(COMPILER) -std=$(LANG) -pedantic-errors -g -Wall -Wextra -Wconversion -Wsign-conversion -c $< -o $@
+	@echo "Compiled $< to $@"
 
 .PHONY: EXE
-EXE: $(OBJECT_FILES)
-	$(COMPILER) -std=$(LANG) -pedantic-errors -g -Wall -Wextra -Wconversion -Wsign-conversion -Werror -o $(OUT)/$(COMP).exe $^
+EXE: $(OUT)/$(COMP).exe
 
+$(OUT)/$(COMP).exe: $(OBJECT_FILES)
+	$(COMPILER) -std=$(LANG) -pedantic-errors -g -Wall -Wextra -Wconversion -Wsign-conversion -Werror -o $@ $^
+
+.PHONY: run
+run: EXE
+	./$(OUT)/$(COMP).exe
+
+.PHONY: clean
 clean:
-	rm -rf $(OUT) $(OUT)/*.exe $(OUT)/*.elf $(OUT)/*.o $(OUT)/*.i $(OUT)/*.s $(OUT)/*.hex
+	rm -rf $(OUT)

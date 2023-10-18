@@ -40,17 +40,19 @@ typedef enum risk_value_e
 
 }risk_value_t;
 
-void tara_main(tara_cfg_t *tara_cfg);
+//void tara_main(tara_cfg_t *tara_cfg);
 
+//void create_asset(asset_t* asset);
 
-uint8_t risk_table[4][4] =
-        {
-            {R_VERY_LOW, R_VERY_LOW, R_LOW, R_LOW},
-            {R_VERY_LOW, R_LOW, R_MODERATE, R_MODERATE},
-            {R_LOW, R_MODERATE, R_MODERATE, R_HIGH},
-            {R_LOW, R_MODERATE, R_HIGH, R_VERY_HIGH},
+void create_system(tara_cfg_t *system);
+void create_function(ecu_t *ecu);
+void create_data(function_t *function);
+void create_damage_scenario(data_t *data);
 
-        };
+void print_assets(tara_cfg_t *system);
+void clear_newline(char *str);
+bool get_positive_integer(size_t *num);
+
 
 risk_value_t calc_risk_value(atk_feas_class_t attackFeasibleClass, impact_level_t impact);
 

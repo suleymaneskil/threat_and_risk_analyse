@@ -1,13 +1,9 @@
-
-#ifndef TARA_CFG_H
-#include "tara_cfg.h"
-#endif
-
+//#ifndef TARA_H
+#include "tara.h"
+//#endif
 
 
-
-
-
+/*
 
 asset_t ecu = {"ECU"};
 asset_t communicationPath = {"Communication Path"};
@@ -47,31 +43,35 @@ void printCybersecurityGoal(struct CybersecurityGoal *goal) {
     printf("Cybersecurity Goal:\n");
     printf("Security Controller: %d\n", goal->control->controller);
     printf("Risk Assessment Address: %p\n", goal->riskAssessment);
-}
+}*/
 
-int main() {// TODO
-    struct damage_scenario_t ecuTampering = {
-        "ECU Tampering",
+
+int main() 
+{
+    tara_cfg_t tara_system;
+
+    printf("Test here\n");
+
+    create_system(&tara_system);
+
+    printf("The tara_system assets are saved!!\n\n\n\n");
+    
+    print_assets(&tara_system);
+    //print_assets_to_file(&tara_system);
+
+    for (size_t i = 0; i < tara_system.num_ecu; ++i) {
+        for (size_t j = 0; j < tara_system.ecu[i].num_function; ++j) 
         {
-            {SEVERE, MAJOR, MODERATE, NEGLIGIBLE},
-            {SEVERE, MAJOR, MODERATE, NEGLIGIBLE},
-            {SEVERE, MAJOR, MODERATE, NEGLIGIBLE},
-            {SEVERE, MAJOR, MODERATE, NEGLIGIBLE}
-        },
-        {
-            {SEVERE, MAJOR, MODERATE, NEGLIGIBLE},
-            {SEVERE, MAJOR, MODERATE, NEGLIGIBLE},
-            {SEVERE, MAJOR, MODERATE, NEGLIGIBLE},
-            {SEVERE, MAJOR, MODERATE, NEGLIGIBLE}
+            for (size_t k = 0; k < tara_system.ecu[i].function[j].num_data; ++k) 
+            {
+                free(tara_system.ecu[i].function[j].data[k].
+                    damage_scenario.damage_scenario_info);
+            }
+            free(tara_system.ecu[i].function[j].data);
         }
-    };
-    
-    attack_scenario_t physicalAccess = {
-        "Physical Access",
-        {T0, Ex0, K0, W0, Eq0} // Örnek değerler
-    };
-    
-    double feasibilitySum = calculateAttackFeasibility(physicalAccess);
-    int attackFeasibleClass = calculateAttackFeasibleClass(feasibilitySum);
-    double riskValue = calculateRiskValue(feasibilitySum, attackFeasibleClass);
-    risk_treatment_decision_t decision =
+        free(tara_system.ecu[i].function);
+    }
+    free(tara_system.ecu);
+
+    return 0;
+}

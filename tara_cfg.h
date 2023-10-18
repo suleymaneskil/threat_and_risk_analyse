@@ -15,6 +15,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
+#include <stdbool.h>
+#include <Windows.h>
 
 /*****************************************************
  * Enums
@@ -38,10 +41,10 @@ typedef enum impact_level_e
  */
 typedef enum ru_impact_class_e
 {
-    FINANCIAL,
-    OPERATIONAL,
-    SAFETY,
-    PRIVACY
+    RU_FINANCIAL,
+    RU_OPERATIONAL,
+    RU_SAFETY,
+    RU_PRIVACY
 }ru_impact_class_t;
 
 /**
@@ -57,8 +60,8 @@ typedef enum ru_impact_class_e
  */
 typedef enum oem_impact_class_e
 {  
-    FINANCIAL,
-    OPERATIONAL
+    OEM_FINANCIAL,
+    OEM_OPERATIONAL
 }oem_impact_class_t;
 
 
@@ -188,24 +191,68 @@ typedef enum security_controller_e {
 /*****************************************************
  * Structure
  * **************************************************/
-typedef struct asset_s {
-    const char *name;
+/*typedef struct asset_s {
+    struct asset_s      *previous;
+    char                name[250];
+    struct asset_s      *next;
+}asset_t;*/
+
+
+typedef struct asset_s
+{
+    char name[250];
+    char id[2500];
 }asset_t;
 
-typedef struct attack_scenario_s
+typedef struct damage_scenario_info_s
 {
-    const char* d_id;
-    const char* description;
+    char d_id[2500];
+    char description[40000];
     
-}attack_scenario_t;
+}damage_scenario_info_t;
 
 typedef struct damage_scenario_s
 {
-    const char* d_id;
-    const char* description;
+    damage_scenario_info_t* damage_scenario_info;
+    size_t num_damage_scenario_info;
     
 }damage_scenario_t;
 
+typedef struct attack_scenario_info_s
+{
+    char d_id[2500];
+    char description[40000];
+    
+}attack_scenario_info_t;
+
+typedef struct attack_scenario_s
+{
+    attack_scenario_info_t* attack_scenario_info;
+    size_t num_attacks;
+    
+}attack_scenario_t;
+
+typedef struct data_s
+{
+    asset_t data_info;
+    damage_scenario_t damage_scenario;
+    attack_scenario_t   attack_scenario;
+}data_t;
+
+typedef struct function_s
+{
+    data_t* data;
+    size_t num_data;
+    asset_t function_info;
+
+}function_t;
+
+typedef struct ecu_s
+{
+    function_t* function;
+    size_t num_function;
+    asset_t ecu_info;
+}ecu_t;
 
 typedef struct ru_impact_s
 {
@@ -264,10 +311,11 @@ typedef struct cybersecurity_claim_s {
 
 typedef struct tara_cfg_s
 {
+    ecu_t* ecu;
+    size_t num_ecu;
     cybersecurity_claim_t claim;
     cybersecurity_goal_t goal;
 }tara_cfg_t;
-
 
 /*****************************************************
  * Enums
